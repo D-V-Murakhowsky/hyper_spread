@@ -21,3 +21,11 @@ class TestGraph(TestCase):
         grph = GraphGenerator.graph_generate('ER', n_of_nodes=100, prob1=0.4)
         self.assertEqual(100, len(grph.nodes))
         self.assertLess(100, len(grph.edges))
+
+        grph = GraphGenerator.graph_generate('WS', n_of_nodes=100, prob1=0.4, k=2)
+        self.assertEqual(100, len(grph.nodes))
+        self.assertLess(100, len(grph.edges))
+
+        grph = GraphGenerator.graph_generate('SW', n_of_nodes=100, prob1=0.8, prob2=0.3, k=2)
+        self.assertEqual(100, len(grph.nodes))
+        self.assertLess(100, len(grph.edges))
