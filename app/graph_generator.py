@@ -5,20 +5,10 @@ from itertools import combinations
 from random import randint
 from typing import Union, Literal
 from networkx.algorithms.approximation.clustering_coefficient import average_clustering
-from collections import namedtuple
 
-from app.models import GraphData
 
-options = {
-    "node_color": "#A0CBE2",
-    "width": 0.5,
-    "with_labels": False,
-    'node_size': 50,
-    'alpha': 0.8,
-    'edge_color': 'grey'
-}
-
-Metrics = namedtuple('Metrics', 'dist_avg clustering')
+from app.models import GraphData, MeasuredGraph
+from app import Metrics
 
 
 class GraphGenerator:
@@ -35,38 +25,30 @@ class GraphGenerator:
         self.G.add_nodes_from(list(range(n_of_nodes)))
 
     @staticmethod
-    def graph_generate(graph_type: Union[Literal['ER'], Literal['WS'], Literal['SW']],
-                       n_of_nodes: int = 100, k: int = 0,
-                       prob1: float = 0, prob2: float = 0) -> GraphData:
+    def graph_generate(graph_data: GraphData) -> MeasuredGraph:
         """
         Main class fabric
-        :param graph_type: defines the one of the possible graph types
-        :param n_of_nodes: number of nodes in generating graph
-        :param k: number of neighbours. Should be even.
-        :param prob1: Probability of short wire
-        :param prob2: Probability of long wire
+        :param graph_data: dataclass GraphData instance
         :return: networks graph
         """
-        if graph_type not in ['ER', 'WS', 'SW']:
+        if graph_data.graph_type not in ['ER', 'WS', 'SW']:
             raise ValueError('Improper graph type')
 
         grph = None
-
-        if graph_type == 'ER':
-            grph = GraphGenerator(n_of_nodes=n_of_nodes, prob1=prob1)
+        if graph_data.graph_type == 'ER':
+            grph = GraphGenerator(n_of_nodes=graph_data.n_of_nodes, prob1=graph_data.p1)
             grph.er_edges()
-        elif graph_type == 'WS':
-            grph = GraphGenerator(n_of_nodes=n_of_nodes, k=k, prob1=prob1)
+        elif graph_data.graph_type == 'WS':
+            grph = GraphGenerator(n_of_nodes=graph_data.n_of_nodes, k=graph_data.k, prob1=graph_data.p1)
             grph.ws_edges()
-        elif graph_type == 'SW':
-            grph = GraphGenerator(n_of_nodes=n_of_nodes, k=k, prob1=prob1, prob2=prob2)
+        elif graph_data.graph_type == 'SW':
+            grph = GraphGenerator(n_of_nodes=graph_data.n_of_nodes, k=graph_data.k,
+                                  prob1=graph_data.p1, prob2=graph_data.p2)
             grph.sw_edges()
 
-        return GraphData(G=grph.G,
-                         number_of_nodes=n_of_nodes,
-                         graph_type=graph_type,
-                         p1=prob1, p2=prob2, k=k,
-                         metrics=None)
+        return MeasuredGraph(G=grph.G,
+                             parameters=graph_data,
+                             metrics=Metrics(0, 0))
 
     @staticmethod
     def prob_func(prob: float) -> np.array:

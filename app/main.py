@@ -1,8 +1,19 @@
 from PyQt5 import QtWidgets as qw
+from app import Metrics
 from app.gui.main_window import Ui_MainWindow
+from app.models import GraphData, MeasuredGraph
+from app.graph_generator import GraphGenerator
 import sys
 import networkx as nx
-import numpy as np
+
+options = {
+    "node_color": "#A0CBE2",
+    "width": 0.3,
+    "with_labels": False,
+    'node_size': 50,
+    'alpha': 0.7,
+    'edge_color': 'grey'
+}
 
 
 class TheWindow(qw.QMainWindow):
@@ -20,8 +31,8 @@ class TheWindow(qw.QMainWindow):
         self.ui.setupUi(self)
 
         # app state variables
-        self.graph_state = None  # graph state (using GraphData)
-        self.G = None  # networkx graph instance
+        self.graph_data: GraphData = GraphData()  # graph state (using GraphData)
+        self.graph: MeasuredGraph = MeasuredGraph()
 
         # event binding (menu)
         self.ui.actionExit.triggered.connect(self.on_exit)
@@ -43,13 +54,20 @@ class TheWindow(qw.QMainWindow):
         pass
 
     def build_graph(self) -> None:
-        pass
+        self.graph = GraphGenerator.graph_generate(self.graph_data)
+
+        # draw graph
+        layout: dict = nx.circular_layout(self.graph.G)
+        nx.draw(self.graph.G, layout, **options, ax=self.ui.static_ax)
+        self.ui.cs.draw()
 
     def simulate(self) -> None:
         pass
 
     def clear(self, flag: int) -> None:
-        pass
+        if flag == 1:
+            self.ui.static_ax.clear()
+            self.ui.cs.draw()
 
     def on_exit(self):
         """
@@ -62,20 +80,4 @@ class TheWindow(qw.QMainWindow):
             pass
         sys.exit(0)
 
-    def plot_graph(self, options):
 
-        # draw graph
-        layout = nx.circular_layout(self.G)
-        nx.draw(self.G, layout, **options, ax=self.ui.static_ax)
-
-        self.ui.cs.draw()
-
-        # average path length
-
-
-        self.ui.pushButton_3.setDisabled(False)
-
-    def on_clear(self):
-        self.ui.static_ax.clear()
-        self.ui.cs.draw()
-        self.G = nx.Graph()
