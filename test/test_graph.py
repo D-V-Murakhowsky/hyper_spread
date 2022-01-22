@@ -8,7 +8,7 @@ class TestGraph(TestCase):
 
     def test_kwargs(self):
         """
-        Test exception for improper grpah type
+        Test exception for improper graph type
         :return:
         """
         self.assertRaises(ValueError, lambda: GraphGenerator.graph_generate('AA'))
