@@ -3,6 +3,7 @@ from app import Metrics
 from app.gui.main_window import Ui_MainWindow
 from app.models import GraphData, MeasuredGraph
 from app.graph_generator import GraphGenerator
+from app.graph_setup import GraphSetup
 import sys
 import networkx as nx
 
@@ -50,8 +51,13 @@ class TheWindow(qw.QMainWindow):
     def graph_save_load(self, flag) -> None:
         pass
 
-    def setup_windows(self, flag) -> None:
-        pass
+    def setup_windows(self, flag: int) -> None:
+        if flag == 1:
+            GraphSetup(self, self.graph_data).show()
+        elif flag == 2:
+            pass
+        else:
+            raise ValueError('Improper flag value')
 
     def build_graph(self) -> None:
         self.graph = GraphGenerator.graph_generate(self.graph_data)
