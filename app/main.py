@@ -62,11 +62,6 @@ class TheWindow(qw.QMainWindow):
             pass
         sys.exit(0)
 
-    def on_plot(self):
-        self.on_clear()
-
-        self.ui.pushButton_3.setDisabled(True)
-
     def plot_graph(self, options):
 
         # draw graph

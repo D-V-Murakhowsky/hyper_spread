@@ -9,6 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 
 class Ui_MainWindow(object):
@@ -145,6 +147,17 @@ class Ui_MainWindow(object):
         self.clear_simulation_button = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
         self.clear_simulation_button.setObjectName("clear_simulation_button")
         self.horizontalLayout_2.addWidget(self.clear_simulation_button)
+
+        self.verticalLayoutWidget_5 = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget_5.setGeometry(QtCore.QRect(20, 60, 591, 390))
+        self.verticalLayoutWidget_5.setObjectName("verticalLayoutWidget_5")
+        self.verticalLayout_canvas = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_5)
+        self.verticalLayout_canvas.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_canvas.setObjectName("verticalLayout_canvas")
+        self.cs = FigureCanvas(Figure(figsize=(8, 6)))
+        self.static_ax = self.cs.figure.subplots()
+        self.verticalLayout_canvas.addWidget(self.cs)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
