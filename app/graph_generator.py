@@ -4,7 +4,10 @@ from random import choice, shuffle
 from itertools import combinations
 from random import randint
 from typing import Union, Literal
+from networkx.algorithms.approximation.clustering_coefficient import average_clustering
+from collections import namedtuple
 
+from app.models import GraphData
 
 options = {
     "node_color": "#A0CBE2",
@@ -15,15 +18,17 @@ options = {
     'edge_color': 'grey'
 }
 
+Metrics = namedtuple('Metrics', 'dist_avg clustering')
+
 
 class GraphGenerator:
 
     def __init__(self, n_of_nodes: int = 100, k: int = 0, prob1: float = 0, prob2: float = 0):
 
         self.n_of_nodes = n_of_nodes  # number of nodes in generating graph
-        self.k = k                    # quantity of neighbours for a node. Should be even
-        self.prob1 = prob1            # probability of short wire
-        self.prob2 = prob2            # probability of long wire
+        self.k = k  # quantity of neighbours for a node. Should be even
+        self.prob1 = prob1  # probability of short wire
+        self.prob2 = prob2  # probability of long wire
 
         self.possible_edges = None
         self.G = nx.Graph()
@@ -32,7 +37,7 @@ class GraphGenerator:
     @staticmethod
     def graph_generate(graph_type: Union[Literal['ER'], Literal['WS'], Literal['SW']],
                        n_of_nodes: int = 100, k: int = 0,
-                       prob1: float = 0, prob2: float = 0) -> nx.Graph:
+                       prob1: float = 0, prob2: float = 0) -> GraphData:
         """
         Main class fabric
         :param graph_type: defines the one of the possible graph types
@@ -45,6 +50,8 @@ class GraphGenerator:
         if graph_type not in ['ER', 'WS', 'SW']:
             raise ValueError('Improper graph type')
 
+        grph = None
+
         if graph_type == 'ER':
             grph = GraphGenerator(n_of_nodes=n_of_nodes, prob1=prob1)
             grph.er_edges()
@@ -55,7 +62,11 @@ class GraphGenerator:
             grph = GraphGenerator(n_of_nodes=n_of_nodes, k=k, prob1=prob1, prob2=prob2)
             grph.sw_edges()
 
-        return grph.G
+        return GraphData(G=grph.G,
+                         number_of_nodes=n_of_nodes,
+                         graph_type=graph_type,
+                         p1=prob1, p2=prob2, k=k,
+                         metrics=None)
 
     @staticmethod
     def prob_func(prob: float) -> np.array:
@@ -169,4 +180,11 @@ class GraphGenerator:
         self.G.add_edges_from(near_edges)
         self.G.add_edges_from(far_edges)
 
+    def graph_metrics(self) -> Metrics:
+        avg_ls = list(filter(lambda x: x > 0.5,
+                             [nx.average_shortest_path_length(C) for C in (self.G.subgraph(c).copy()
+                                                                           for c in nx.connected_components(self.G))]))
+        avg_distance = np.mean(avg_ls)
+        cl_koef = average_clustering(self.G, trials=10000)
 
+        return Metrics(avg_distance, cl_koef)

@@ -3,7 +3,7 @@ from app.gui.main_window import Ui_MainWindow
 import sys
 import networkx as nx
 import numpy as np
-from networkx.algorithms.approximation.clustering_coefficient import average_clustering
+
 
 
 class TheWindow(qw.QMainWindow):
@@ -26,6 +26,21 @@ class TheWindow(qw.QMainWindow):
 
         # event binding
         self.ui.actionExit.triggered.connect(self.on_exit)
+
+    def graph_save_load(self, flag) -> None:
+        pass
+
+    def setup_windows(self, flag) -> None:
+        pass
+
+    def build_graph(self) -> None:
+        pass
+
+    def simulate(self) ->  None:
+        pass
+
+    def clear(self, flag: int) -> None:
+        pass
 
     def on_exit(self):
         """
@@ -52,14 +67,7 @@ class TheWindow(qw.QMainWindow):
         self.ui.cs.draw()
 
         # average path length
-        avg_ls = list(filter(lambda x: x > 0.5,
-                             [cur_path := nx.average_shortest_path_length(C) for C in (self.G.subgraph(c).copy()
-                                                                             for c in nx.connected_components(self.G))]))
-        self.ui.distance.setText(f'{np.mean(avg_ls):5.3f}')
 
-        # clustering coefficient
-        cl_koef = average_clustering(self.G, trials=10000)
-        self.ui.clustering.setText(f'{cl_koef:4.3f}')
 
         self.ui.pushButton_3.setDisabled(False)
 
