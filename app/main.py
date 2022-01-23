@@ -52,6 +52,7 @@ class TheWindow(qw.QMainWindow):
 
         # setting default labels values
         self.params_updater()
+        self.ui.progressBar.setValue(0)
 
     def setup_windows(self, flag: int) -> None:
         if flag == 1:

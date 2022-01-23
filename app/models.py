@@ -26,9 +26,10 @@ class GraphData:
 @dataclass
 class SimulationData:
 
-    p_trans: float = 0.3
+    p_trans: float = 0.2
     t_rec: int = 14
     t_sus: np.float64 = 180
+    n_of_steps: int = 100
 
 
 @dataclass
@@ -36,6 +37,15 @@ class SimulationResult:
 
     n_of_infected: pd.Series  # represents number of infected by each node
     nodes_state: pd.Series  # represents final states of nodes to mark infected nodes on the graph
+    comparison: pd.DataFrame
+
+    def __init__(self, nodes):
+        self.n_of_infected = pd.Series(index=nodes)
+        self.n_of_infected.fillna(0, inplace=True)
+        self.nodes_state = pd.Series(nodes)
+        self.nodes = False
+        self.comparison = pd.DataFrame(index=nodes, columns=['n_connections', 'n_infected'])
+
 
 @dataclass
 class MeasuredGraph:
