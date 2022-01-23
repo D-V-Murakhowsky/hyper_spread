@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets as qw
+from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from app import Metrics
 from app.gui.main_window import Ui_MainWindow
 from app.models import GraphData, MeasuredGraph
@@ -53,11 +54,17 @@ class TheWindow(qw.QMainWindow):
 
     def setup_windows(self, flag: int) -> None:
         if flag == 1:
-            GraphSetup(self, self.graph_data).show()
+            g_setup = GraphSetup(self, self.graph_data)
+            g_setup.chosen_data.connect(self.params_updater)
+            g_setup.show()
         elif flag == 2:
             pass
         else:
             raise ValueError('Improper flag value')
+
+    @pyqtSlot(GraphData)
+    def params_updater(self, g_data):
+        pass
 
     def build_graph(self) -> None:
         self.graph = GraphGenerator.graph_generate(self.graph_data)
