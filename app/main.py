@@ -1,7 +1,6 @@
 from PyQt5 import QtWidgets as qw
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from app import Metrics
+from PyQt5.QtCore import pyqtSlot
 from app.gui.main_window import Ui_MainWindow
 from app.models import GraphData, MeasuredGraph
 from app.graph_generator import GraphGenerator
