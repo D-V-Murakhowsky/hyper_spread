@@ -1,12 +1,12 @@
 import networkx as nx
 import numpy as np
-from random import choice, shuffle
 from itertools import combinations
 from random import randint
 from networkx.algorithms.approximation.clustering_coefficient import average_clustering
 
 
 from app.models import GraphData, MeasuredGraph
+from app.utils import Utils
 from app import Metrics
 
 
@@ -48,20 +48,6 @@ class GraphGenerator:
         return MeasuredGraph(G=grph.G, metrics=Metrics(0, 0))
 
     @staticmethod
-    def prob_func(prob: float) -> np.array:
-        """
-        Choices vertexes to connect from a list
-        :param prob: probability of wiring
-        :return: chosen nodes
-        """
-        p = int(prob * 100)
-        arr = np.zeros(100)
-        arr[:p] = 1
-        arr = list(arr)
-        shuffle(arr)
-        return choice(arr)
-
-    @staticmethod
     def make_n_k(k: int) -> np.array:
         """
         Neighbours numbers
@@ -83,7 +69,7 @@ class GraphGenerator:
         self.possible_edges = combinations(list(self.G.nodes), 2)
         edge_list = []
         for edge in self.possible_edges:
-            if self.prob_func(self.prob1) == 1:
+            if Utils.prob_func(self.prob1) == 1:
                 edge_list.append(edge)
         self.G.add_edges_from(edge_list)
 
@@ -111,7 +97,7 @@ class GraphGenerator:
         # rewiring
         final_edges = []
         for edge in near_edges:
-            if self.prob_func(self.prob1) == 1:
+            if Utils.prob_func(self.prob1) == 1:
                 # make rewiring
                 node = edge[0]
                 node_left = node + 1 if (node + 1) < self.n_of_nodes else (node + 1 - self.n_of_nodes)
@@ -138,7 +124,7 @@ class GraphGenerator:
             neighbours = n_k + node
             # short distance
             for one in neighbours:
-                if self.prob_func(self.prob1) == 1:
+                if Utils.prob_func(self.prob1) == 1:
                     if one != node:
                         if one < 0:
                             one += self.n_of_nodes
@@ -149,7 +135,7 @@ class GraphGenerator:
             # long distance
             not_neighbours = [node for node in list(self.G.nodes) if node not in neighbours]
             for one in not_neighbours:
-                if self.prob_func(self.prob2) == 1:
+                if Utils.prob_func(self.prob2) == 1:
                     if one < 0:
                         one += self.n_of_nodes
                     elif one > self.n_of_nodes - 1:
@@ -160,7 +146,7 @@ class GraphGenerator:
         self.G.add_edges_from(far_edges)
 
     @staticmethod
-    def graph_metrics(G) -> Metrics:
+    def graph_metrics(G: nx.Graph) -> Metrics:
         avg_ls = list(filter(lambda x: x > 0.5,
                              [nx.average_shortest_path_length(C) for C in (G.subgraph(c).copy()
                                                                            for c in nx.connected_components(G))]))
