@@ -25,7 +25,6 @@ class GraphData:
 class MeasuredGraph:
 
     G: Graph = Graph()
-    parameters: GraphData = GraphData()
     metrics: Metrics = Metrics(0, 0)
 
 

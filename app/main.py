@@ -49,13 +49,16 @@ class TheWindow(qw.QMainWindow):
         self.ui.clear_graph_button.clicked.connect(lambda _: self.clear(1))
         self.ui.clear_simulation_button.clicked.connect(lambda _: self.clear(2))
 
+        # setting default labels values
+        self.params_updater()
+
     def graph_save_load(self, flag) -> None:
         pass
 
     def setup_windows(self, flag: int) -> None:
         if flag == 1:
             g_setup = GraphSetup(self, self.graph_data)
-            g_setup.chosen_data.connect(self.params_updater)
+            g_setup.chosen_data.connect(self.graph_data_update)
             g_setup.show()
         elif flag == 2:
             pass
@@ -63,8 +66,16 @@ class TheWindow(qw.QMainWindow):
             raise ValueError('Improper flag value')
 
     @pyqtSlot(GraphData)
-    def params_updater(self, g_data):
-        pass
+    def graph_data_update(self, g_data:GraphData) -> None:
+        self.graph_data = g_data
+        self.params_updater()
+
+    def params_updater(self) -> None:
+        self.ui.graph_type_label.setText(self.graph_data.graph_type)
+        self.ui.number_of_of_nodes_label.setText(str(self.graph_data.n_of_nodes))
+        if self.graph is not None:
+            self.ui.distance_label.setText(str(self.graph.metrics.dist_avg))
+            self.ui.clustering_label.setText(str(self.graph.metrics.clustering))
 
     def build_graph(self) -> None:
         self.graph = GraphGenerator.graph_generate(self.graph_data)
