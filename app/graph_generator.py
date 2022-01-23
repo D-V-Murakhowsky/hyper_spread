@@ -3,7 +3,6 @@ import numpy as np
 from random import choice, shuffle
 from itertools import combinations
 from random import randint
-from typing import Union, Literal
 from networkx.algorithms.approximation.clustering_coefficient import average_clustering
 
 
@@ -46,9 +45,7 @@ class GraphGenerator:
                                   prob1=graph_data.p1, prob2=graph_data.p2)
             grph.sw_edges()
 
-        return MeasuredGraph(G=grph.G,
-                             parameters=graph_data,
-                             metrics=Metrics(0, 0))
+        return MeasuredGraph(G=grph.G, metrics=Metrics(0, 0))
 
     @staticmethod
     def prob_func(prob: float) -> np.array:
@@ -162,11 +159,12 @@ class GraphGenerator:
         self.G.add_edges_from(near_edges)
         self.G.add_edges_from(far_edges)
 
-    def graph_metrics(self) -> Metrics:
+    @staticmethod
+    def graph_metrics(G) -> Metrics:
         avg_ls = list(filter(lambda x: x > 0.5,
-                             [nx.average_shortest_path_length(C) for C in (self.G.subgraph(c).copy()
-                                                                           for c in nx.connected_components(self.G))]))
+                             [nx.average_shortest_path_length(C) for C in (G.subgraph(c).copy()
+                                                                           for c in nx.connected_components(G))]))
         avg_distance = np.mean(avg_ls)
-        cl_koef = average_clustering(self.G, trials=10000)
+        cl_koef = average_clustering(G, trials=10000)
 
         return Metrics(avg_distance, cl_koef)

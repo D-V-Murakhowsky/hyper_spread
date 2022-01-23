@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets as qw
+from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 from app import Metrics
 from app.gui.main_window import Ui_MainWindow
@@ -7,6 +8,7 @@ from app.graph_generator import GraphGenerator
 from app.graph_setup import GraphSetup
 import sys
 import networkx as nx
+import pathlib
 
 options = {
     "node_color": "#A0CBE2",
@@ -40,8 +42,8 @@ class TheWindow(qw.QMainWindow):
         self.ui.actionExit.triggered.connect(self.on_exit)
         self.ui.actionGraph_generation.triggered.connect(lambda x: self.setup_windows(1))
         self.ui.actionSimulation.triggered.connect(lambda _: self.setup_windows(2))
-        self.ui.actionLoad_graph.triggered.connect(lambda _: self.graph_save_load(1))
-        self.ui.actionSave_graph.triggered.connect(lambda _: self.graph_save_load(2))
+        self.ui.actionLoad_graph.triggered.connect(self.load_graph)
+        self.ui.actionSave_graph.triggered.connect(self.save_graph)
 
         # events binding (buttons)
         self.ui.generate_graph_button.clicked.connect(self.build_graph)
@@ -51,9 +53,6 @@ class TheWindow(qw.QMainWindow):
 
         # setting default labels values
         self.params_updater()
-
-    def graph_save_load(self, flag) -> None:
-        pass
 
     def setup_windows(self, flag: int) -> None:
         if flag == 1:
@@ -77,13 +76,37 @@ class TheWindow(qw.QMainWindow):
             self.ui.distance_label.setText(str(self.graph.metrics.dist_avg))
             self.ui.clustering_label.setText(str(self.graph.metrics.clustering))
 
-    def build_graph(self) -> None:
-        self.graph = GraphGenerator.graph_generate(self.graph_data)
-
+    def show_graph(self) -> None:
         # draw graph
         layout: dict = nx.circular_layout(self.graph.G)
         nx.draw(self.graph.G, layout, **options, ax=self.ui.static_ax)
         self.ui.cs.draw()
+
+    def build_graph(self) -> None:
+        self.graph = GraphGenerator.graph_generate(self.graph_data)
+        self.show_graph()
+
+    def load_graph(self) -> None:
+        path = QFileDialog.getOpenFileName(self, 'Open file...', '',
+                                           'Binary files (*.pickle)')
+        path = pathlib.Path(path[0])
+        try:
+            if path.exists():
+                graph = nx.readwrite.read_gpickle(path)
+                self.graph = MeasuredGraph(G=graph,
+                                           metrics=GraphGenerator.graph_metrics(graph))
+                self.show_graph()
+        except Exception as ex:
+            pass
+
+    def save_graph(self) -> None:
+        path = QFileDialog.getSaveFileName(self, 'Save file...', '',
+                                           'Binary files (*.pickle)')
+        path = pathlib.Path(path[0])
+        try:
+            nx.readwrite.write_gpickle(self.graph.G, path)
+        except Exception as ex:
+            pass
 
     def simulate(self) -> None:
         pass
