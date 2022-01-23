@@ -17,4 +17,5 @@ class TestSimualtion(TestCase):
 
     def test_one_simulation(self):
         sm = Simulation(self.G, self.data)
-        sm.run()
+        result = sm.run().sorted_data
+        pass
