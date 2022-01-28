@@ -4,11 +4,34 @@ import networkx as nx
 from random import choice
 import logging
 
-from app.models import SimulationData, SimulationResult
+from PyQt5.QtCore import pyqtSignal, QObject
+
+
+from app.models import SimulationData, SimulationResult, GraphData
 from app.utils import Utils
 
 
 logger = logging.getLogger('main_logger')
+
+
+class SimulationManager(QObject):
+    """
+    Uses to run multiply simulations using Simulation class for s single one
+    """
+    progress_updater = pyqtSignal(int)  # used for updating progress bar in the main window
+    finished = pyqtSignal(pd.DataFrame) # used on simulation finish
+
+    def __init__(self, graph: nx.Graph, sim_data: SimulationData, current_value: int = 0):
+        super().__init__()
+        self.isRun = False
+        self.G = graph
+        self.data = sim_data
+        self.current_value = current_value
+
+    def run(self):
+        self.progress_updater.emit(self.current_value + 10)
+        self.finished.emit(pd.DataFrame())
+        pass
 
 
 class Simulation:

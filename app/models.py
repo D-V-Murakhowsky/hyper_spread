@@ -36,7 +36,7 @@ class SimulationData:
 class SimulationResult:
 
     n_of_infected: pd.Series  # represents number of infected by each node
-    nodes_state: pd.Series  # represents final states of nodes to mark infected nodes on the graph
+    nodes_state: pd.Series   # represents final states of nodes to mark infected nodes on the graph
     comparison: pd.DataFrame
 
     @property

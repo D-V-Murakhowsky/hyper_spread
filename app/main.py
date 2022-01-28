@@ -1,14 +1,19 @@
+import sys
+import networkx as nx
+import pathlib
+
+import pandas as pd
 from PyQt5 import QtWidgets as qw
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QThread
+
 from app.gui.main_window import Ui_MainWindow
 from app.models import GraphData, MeasuredGraph, SimulationData, SimulationResult
 from app.graph_generator import GraphGenerator
 from app.graph_setup import GraphSetup
 from app.simulation_setup import SimSetupWindow
-import sys
-import networkx as nx
-import pathlib
+from app.simulation import SimulationManager
+
 
 options = {
     "node_color": "#A0CBE2",
@@ -39,6 +44,9 @@ class TheWindow(qw.QMainWindow):
         self.graph: MeasuredGraph = MeasuredGraph()
         self.sim_data: SimulationData = SimulationData()
 
+        # simulation instance
+        self.simulation = None
+
         # event binding (menu)
         self.ui.actionExit.triggered.connect(self.on_exit)
         self.ui.actionGraph_generation.triggered.connect(lambda x: self.setup_windows(1))
@@ -56,6 +64,9 @@ class TheWindow(qw.QMainWindow):
         self.params_updater()
         self.sim_data_updater()
         self.ui.progressBar.setValue(0)
+
+        # simulation thread
+        self.sim_thread = None
 
     def setup_windows(self, flag: int) -> None:
         """
@@ -89,12 +100,26 @@ class TheWindow(qw.QMainWindow):
     @pyqtSlot(SimulationData)
     def sim_data_update(self, sim_data: SimulationData) -> None:
         """
-        Simulation setup window. Updates simulation data labels and simulation data property on setup window signal
+        Simulation setup window. Updates simulation data labels and
+        simulation data property on setup window signal
         :param sim_data: simulation setup data
         :return: None
         """
         self.sim_data = sim_data
         self.sim_data_updater()
+
+    @pyqtSlot(int)
+    def update_progress_bar(self, value: int) -> None:
+        """
+        Updates progress bar value
+        :param value: value to set
+        :return: None
+        """
+        self.ui.progressBar.setValue(value)
+
+    @pyqtSlot(pd.DataFrame)
+    def on_simulation_finish(self, df: pd.DataFrame) -> None:
+        self.sim_thread = None
 
     def params_updater(self) -> None:
         """
@@ -176,7 +201,13 @@ class TheWindow(qw.QMainWindow):
             pass
 
     def simulate(self) -> None:
-        pass
+        self.sim_thread = QThread(parent=self)
+        self.simulation = SimulationManager(self.graph.G, self.sim_data, current_value=self.ui.progressBar.value())
+        self.simulation.progress_updater.connect(self.update_progress_bar)
+        self.simulation.finished.connect(self.on_simulation_finish)
+        self.simulation.moveToThread(self.sim_thread)
+        self.sim_thread.started.connect(self.simulation.run)
+        self.sim_thread.start()
 
     def clear(self, flag: int) -> None:
         """
