@@ -5,6 +5,7 @@ from app.gui.main_window import Ui_MainWindow
 from app.models import GraphData, MeasuredGraph, SimulationData, SimulationResult
 from app.graph_generator import GraphGenerator
 from app.graph_setup import GraphSetup
+from app.simulation_setup import SimSetupWindow
 import sys
 import networkx as nx
 import pathlib
@@ -53,15 +54,23 @@ class TheWindow(qw.QMainWindow):
 
         # setting default labels values
         self.params_updater()
+        self.sim_data_updater()
         self.ui.progressBar.setValue(0)
 
     def setup_windows(self, flag: int) -> None:
+        """
+        Opens setup windows
+        :param flag: 1 - graph setup, 2 - simulation setup
+        :return: None
+        """
         if flag == 1:
             g_setup = GraphSetup(self, self.graph_data)
             g_setup.chosen_data.connect(self.graph_data_update)
             g_setup.show()
         elif flag == 2:
-            pass
+            s_setup = SimSetupWindow(self, self.sim_data)
+            s_setup.chosen_data.connect(self.sim_data_update)
+            s_setup.show()
         else:
             raise ValueError('Improper flag value')
 
@@ -74,10 +83,8 @@ class TheWindow(qw.QMainWindow):
 
     @pyqtSlot(SimulationData)
     def sim_data_update(self, sim_data: SimulationData) -> None:
-        self.ui.sim_metric_1.setText(str(sim_data.n_of_steps))
-        self.ui.sim_metric_2.setText(str(sim_data.p_trans))
-        self.ui.sim_metric_3.setText((str(sim_data.t_rec)))
-        self.ui.sim_metric_4.setText(str(sim_data.t_sus))
+        self.sim_data = sim_data
+        self.sim_data_updater()
 
     def params_updater(self) -> None:
         self.ui.graph_type_label.setText(self.graph_data.graph_type)
@@ -85,6 +92,12 @@ class TheWindow(qw.QMainWindow):
         if self.graph is not None:
             self.ui.distance_label.setText(str(self.graph.metrics.dist_avg))
             self.ui.clustering_label.setText(str(self.graph.metrics.clustering))
+
+    def sim_data_updater(self):
+        self.ui.sim_metric_1.setText(str(self.sim_data.n_of_steps))
+        self.ui.sim_metric_2.setText(str(self.sim_data.p_trans))
+        self.ui.sim_metric_3.setText((str(self.sim_data.t_rec)))
+        self.ui.sim_metric_4.setText(str(self.sim_data.t_sus))
 
     def show_graph(self) -> None:
         # draw graph
