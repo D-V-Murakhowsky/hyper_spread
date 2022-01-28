@@ -1,6 +1,5 @@
 from dataclasses import dataclass, asdict
 from networkx import Graph
-import numpy as np
 import pandas as pd
 from typing import Union, Literal
 
@@ -26,10 +25,11 @@ class GraphData:
 @dataclass
 class SimulationData:
 
-    p_trans: float = 0.2
-    t_rec: int = 14
-    t_sus: np.float64 = 180
-    n_of_steps: int = 100
+    p_trans: float = 0.2     # transition probability
+    t_rec: int = 14          # recovery time
+    t_sus: int = 180         # sustainable time
+    n_of_steps: int = 100    # number of simulation steps
+    iter: int = 1            # number of iterations (simulations)
 
 
 @dataclass

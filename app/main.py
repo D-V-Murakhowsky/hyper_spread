@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets as qw
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import pyqtSlot
 from app.gui.main_window import Ui_MainWindow
-from app.models import GraphData, MeasuredGraph
+from app.models import GraphData, MeasuredGraph, SimulationData, SimulationResult
 from app.graph_generator import GraphGenerator
 from app.graph_setup import GraphSetup
 import sys
@@ -36,6 +36,7 @@ class TheWindow(qw.QMainWindow):
         # app state variables
         self.graph_data: GraphData = GraphData()  # graph state (using GraphData)
         self.graph: MeasuredGraph = MeasuredGraph()
+        self.sim_data: SimulationData = SimulationData()
 
         # event binding (menu)
         self.ui.actionExit.triggered.connect(self.on_exit)
@@ -70,6 +71,13 @@ class TheWindow(qw.QMainWindow):
         self.params_updater()
         self.update_metric_labels(clear=True)
         self.clear(flag=1)
+
+    @pyqtSlot(SimulationData)
+    def sim_data_update(self, sim_data: SimulationData) -> None:
+        self.ui.sim_metric_1.setText(str(sim_data.n_of_steps))
+        self.ui.sim_metric_2.setText(str(sim_data.p_trans))
+        self.ui.sim_metric_3.setText((str(sim_data.t_rec)))
+        self.ui.sim_metric_4.setText(str(sim_data.t_sus))
 
     def params_updater(self) -> None:
         self.ui.graph_type_label.setText(self.graph_data.graph_type)
