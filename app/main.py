@@ -65,9 +65,11 @@ class TheWindow(qw.QMainWindow):
             raise ValueError('Improper flag value')
 
     @pyqtSlot(GraphData)
-    def graph_data_update(self, g_data:GraphData) -> None:
+    def graph_data_update(self, g_data: GraphData) -> None:
         self.graph_data = g_data
         self.params_updater()
+        self.update_metric_labels(clear=True)
+        self.clear(flag=1)
 
     def params_updater(self) -> None:
         self.ui.graph_type_label.setText(self.graph_data.graph_type)
@@ -82,9 +84,14 @@ class TheWindow(qw.QMainWindow):
         nx.draw(self.graph.G, layout, **options, ax=self.ui.static_ax)
         self.ui.cs.draw()
 
+    def update_metric_labels(self, clear=False) -> None:
+        self.ui.distance_label.setText('0' if clear else str(round(self.graph.metrics.dist_avg, 3)))
+        self.ui.clustering_label.setText('0' if clear else str(round(self.graph.metrics.clustering, 3)))
+
     def build_graph(self) -> None:
         self.graph = GraphGenerator.graph_generate(self.graph_data)
         self.show_graph()
+        self.update_metric_labels()
 
     def load_graph(self) -> None:
         path = QFileDialog.getOpenFileName(self, 'Open file...', '',
@@ -96,6 +103,7 @@ class TheWindow(qw.QMainWindow):
                 self.graph = MeasuredGraph(G=graph,
                                            metrics=GraphGenerator.graph_metrics(graph))
                 self.show_graph()
+                self.update_metric_labels()
         except Exception as ex:
             pass
 

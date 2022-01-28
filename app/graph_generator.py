@@ -45,7 +45,7 @@ class GraphGenerator:
                                   prob1=graph_data.p1, prob2=graph_data.p2)
             grph.sw_edges()
 
-        return MeasuredGraph(G=grph.G, metrics=Metrics(0, 0))
+        return MeasuredGraph(G=grph.G, metrics=grph.graph_metrics(grph.G))
 
     @staticmethod
     def make_n_k(k: int) -> np.array:
