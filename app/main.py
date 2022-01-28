@@ -76,6 +76,11 @@ class TheWindow(qw.QMainWindow):
 
     @pyqtSlot(GraphData)
     def graph_data_update(self, g_data: GraphData) -> None:
+        """
+        Graph data slot. Updates graph data labels and graph data property on setup window signal
+        :param g_data: graph setup data
+        :return: None
+        """
         self.graph_data = g_data
         self.params_updater()
         self.update_metric_labels(clear=True)
@@ -83,10 +88,19 @@ class TheWindow(qw.QMainWindow):
 
     @pyqtSlot(SimulationData)
     def sim_data_update(self, sim_data: SimulationData) -> None:
+        """
+        Simulation setup window. Updates simulation data labels and simulation data property on setup window signal
+        :param sim_data: simulation setup data
+        :return: None
+        """
         self.sim_data = sim_data
         self.sim_data_updater()
 
     def params_updater(self) -> None:
+        """
+        Updates graph labels
+        :return: None
+        """
         self.ui.graph_type_label.setText(self.graph_data.graph_type)
         self.ui.number_of_of_nodes_label.setText(str(self.graph_data.n_of_nodes))
         if self.graph is not None:
@@ -94,27 +108,47 @@ class TheWindow(qw.QMainWindow):
             self.ui.clustering_label.setText(str(self.graph.metrics.clustering))
 
     def sim_data_updater(self):
+        """
+        Updates simulation data labels
+        :return: None
+        """
         self.ui.sim_metric_1.setText(str(self.sim_data.n_of_steps))
         self.ui.sim_metric_2.setText(str(self.sim_data.p_trans))
         self.ui.sim_metric_3.setText((str(self.sim_data.t_rec)))
         self.ui.sim_metric_4.setText(str(self.sim_data.t_sus))
 
     def show_graph(self) -> None:
-        # draw graph
+        """
+        Draws graph on matplotlib canvas
+        :return: None
+        """
         layout: dict = nx.circular_layout(self.graph.G)
         nx.draw(self.graph.G, layout, **options, ax=self.ui.static_ax)
         self.ui.cs.draw()
 
     def update_metric_labels(self, clear=False) -> None:
+        """
+        Updates metric labels
+        :param clear: if clear=True puts "0", graphs metrics otherwise
+        :return: None
+        """
         self.ui.distance_label.setText('0' if clear else str(round(self.graph.metrics.dist_avg, 3)))
         self.ui.clustering_label.setText('0' if clear else str(round(self.graph.metrics.clustering, 3)))
 
     def build_graph(self) -> None:
+        """
+        Generates graph after pressing the proper button
+        :return: None
+        """
         self.graph = GraphGenerator.graph_generate(self.graph_data)
         self.show_graph()
         self.update_metric_labels()
 
     def load_graph(self) -> None:
+        """
+        Loads graph from binary file
+        :return: None
+        """
         path = QFileDialog.getOpenFileName(self, 'Open file...', '',
                                            'Binary files (*.pickle)')
         path = pathlib.Path(path[0])
@@ -129,6 +163,10 @@ class TheWindow(qw.QMainWindow):
             pass
 
     def save_graph(self) -> None:
+        """
+        Saves graph to binary file
+        :return: None
+        """
         path = QFileDialog.getSaveFileName(self, 'Save file...', '',
                                            'Binary files (*.pickle)')
         path = pathlib.Path(path[0])
@@ -141,6 +179,11 @@ class TheWindow(qw.QMainWindow):
         pass
 
     def clear(self, flag: int) -> None:
+        """
+        Clears the matplotlib canvas
+        :param flag: 1 - fully, 2 - from simulation data
+        :return: None
+        """
         if flag == 1:
             self.ui.static_ax.clear()
             self.ui.cs.draw()
