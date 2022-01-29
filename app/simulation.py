@@ -27,6 +27,11 @@ class SimulationManager(QObject):
         self.data = sim_data
 
     def run(self):
+        """
+        Runs multiply simulations
+        Can be easily changed for multithreading run
+        :return:
+        """
         current_value = 10
         self.progress_updater.emit(current_value)
         shift = int (80 / self.data.iter)
@@ -49,6 +54,9 @@ class SimulationManager(QObject):
 
 
 class Simulation:
+    """
+    Runs a single simulation
+    """
 
     def __init__(self, graph: nx.Graph, sim_data: SimulationData):
         self.G = graph

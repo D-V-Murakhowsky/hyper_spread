@@ -6,6 +6,9 @@ from PyQt5.QtCore import pyqtSignal
 
 
 class SimSetupWindow(qw.QDialog):
+    """
+    Simulation setup window
+    """
 
     chosen_data = pyqtSignal(SimulationData)
 
@@ -24,9 +27,13 @@ class SimSetupWindow(qw.QDialog):
         self.ui.lineEdit_4.setText(str(sim_data.n_of_steps))
         self.ui.lineEdit_5.setText(str(sim_data.iter))
 
-    def on_ok(self):
-        return self.chosen_data.emit(SimulationData(p_trans=float(self.ui.lineEdit_3.text()),
-                                                    t_rec=int(self.ui.lineEdit_2.text()),
-                                                    t_sus=int(self.ui.lineEdit.text()),
-                                                    n_of_steps=int(self.ui.lineEdit_4.text()),
-                                                    iter=int(self.ui.lineEdit_5.text())))
+    def on_ok(self) -> None:
+        """
+        Sends signal on OK click
+        :return:
+        """
+        self.chosen_data.emit(SimulationData(p_trans=float(self.ui.lineEdit_3.text()),
+                                             t_rec=int(self.ui.lineEdit_2.text()),
+                                             t_sus=int(self.ui.lineEdit.text()),
+                                             n_of_steps=int(self.ui.lineEdit_4.text()),
+                                             iter=int(self.ui.lineEdit_5.text())))

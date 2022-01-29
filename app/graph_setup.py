@@ -11,6 +11,9 @@ graph_types_dict = {'Erdos-Renyi model': 'ER',
 
 
 class GraphSetup(qw.QDialog):
+    """
+    Generates grap setup window and returns setup data as PyQt signal to process in main thread
+    """
 
     chosen_data = pyqtSignal(GraphData)
 
@@ -31,10 +34,11 @@ class GraphSetup(qw.QDialog):
         self.ui.spinBox.setValue(graph_data.n_of_nodes)
         self.ui.k.setText(str(graph_data.k))
 
-    def set_enable_disable(self):
-        pass
-
-    def on_ok(self):
+    def on_ok(self) -> None:
+        """
+        Emits signal on Ok button click
+        :return: None
+        """
         g_type = graph_types_dict[self.ui.graph_type.checkedButton().text()]
         self.chosen_data.emit(GraphData(n_of_nodes=self.ui.spinBox.value(),
                                         graph_type=g_type,

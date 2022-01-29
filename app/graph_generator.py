@@ -13,7 +13,7 @@ from app import Metrics
 class GraphGenerator:
     """
     Generates small world graph using one of following models:
-        -  Erdos - Renyi
+        - Erdos - Renyi
         - Watts - Strogatz
         - Song - Wang
     """

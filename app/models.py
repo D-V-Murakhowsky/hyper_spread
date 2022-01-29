@@ -8,6 +8,9 @@ from app import Metrics
 
 @dataclass
 class GraphData:
+    """
+    Dataclass represents graph parameters for generation
+    """
 
     n_of_nodes: int = 70
     graph_type: Union[Literal['ER'], Literal['WS'], Literal['SW']] = 'ER'
@@ -24,6 +27,9 @@ class GraphData:
 
 @dataclass
 class SimulationData:
+    """
+    Dataclass represents simulation parameters for its run
+    """
 
     p_trans: float = 0.2     # transition probability
     t_rec: int = 14          # recovery time
@@ -34,6 +40,9 @@ class SimulationData:
 
 @dataclass
 class SimulationResult:
+    """
+    Represents simulation's results
+    """
 
     comparison: pd.DataFrame
 
@@ -51,6 +60,9 @@ class SimulationResult:
 
 @dataclass
 class MeasuredGraph:
+    """
+    networkx graph with its metrics
+    """
 
     G: Graph = Graph()
     metrics: Metrics = Metrics(0, 0)

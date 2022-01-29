@@ -27,7 +27,14 @@ class SimResultWindow(qw.QDialog):
         # show table
         self.display_table(self.ui.tableView, df)
 
-    def display_table(self, view: qw.QTableView, df: pd.DataFrame) -> None:
+    @staticmethod
+    def display_table(view: qw.QTableView, df: pd.DataFrame) -> None:
+        """
+        Displays dataframe data in a given Qt View
+        :param view: Qt view
+        :param df: pandas dataframe
+        :return: None
+        """
         view.horizontalHeader()
         header = view.horizontalHeader()
         header.setSectionResizeMode(qw.QHeaderView.ResizeMode.ResizeToContents)
