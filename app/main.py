@@ -59,7 +59,6 @@ class TheWindow(qw.QMainWindow):
         self.ui.generate_graph_button.clicked.connect(self.build_graph)
         self.ui.simulate_button.clicked.connect(self.simulate)
         self.ui.clear_graph_button.clicked.connect(lambda _: self.clear(1))
-        self.ui.clear_simulation_button.clicked.connect(lambda _: self.clear(2))
 
         # setting default labels values
         self.params_updater()

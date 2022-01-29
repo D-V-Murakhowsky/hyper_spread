@@ -155,9 +155,6 @@ class Ui_MainWindow(object):
         self.simulate_button = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
         self.simulate_button.setObjectName("simulate_button")
         self.horizontalLayout_2.addWidget(self.simulate_button)
-        self.clear_simulation_button = QtWidgets.QPushButton(self.horizontalLayoutWidget_2)
-        self.clear_simulation_button.setObjectName("clear_simulation_button")
-        self.horizontalLayout_2.addWidget(self.clear_simulation_button)
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
         self.progressBar.setGeometry(QtCore.QRect(20, 440, 591, 23))
         self.progressBar.setProperty("value", 24)
@@ -198,7 +195,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Epidemy diffusion simulation"))
         self.groupBox.setTitle(_translate("MainWindow", "Graph metrics"))
         self.label_8.setText(_translate("MainWindow", "Graph type"))
         self.label_9.setText(_translate("MainWindow", "Number of nodes"))
@@ -220,7 +217,6 @@ class Ui_MainWindow(object):
         self.generate_graph_button.setText(_translate("MainWindow", "Generate graph"))
         self.clear_graph_button.setText(_translate("MainWindow", "Clear graph"))
         self.simulate_button.setText(_translate("MainWindow", "Simulate"))
-        self.clear_simulation_button.setText(_translate("MainWindow", "Clear simulation"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings"))
         self.actionLoad_graph.setText(_translate("MainWindow", "Load graph..."))
