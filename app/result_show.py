@@ -18,6 +18,9 @@ class SimResultWindow(qw.QDialog):
         # sets triggers
         self.ui.pushButton.clicked.connect(self.close)
 
+        # transform table for better perception
+
+
         # show table
         self.display_table(self.ui.tableView, df)
 
