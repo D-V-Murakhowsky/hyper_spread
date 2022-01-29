@@ -13,6 +13,7 @@ from app.graph_generator import GraphGenerator
 from app.graph_setup import GraphSetup
 from app.simulation_setup import SimSetupWindow
 from app.simulation import SimulationManager
+from app.result_show import SimResultWindow
 
 
 options = {
@@ -120,6 +121,7 @@ class TheWindow(qw.QMainWindow):
     @pyqtSlot(pd.DataFrame)
     def on_simulation_finish(self, df: pd.DataFrame) -> None:
         self.sim_thread = None
+        SimResultWindow(parent=self, df=df).show()
 
     def params_updater(self) -> None:
         """

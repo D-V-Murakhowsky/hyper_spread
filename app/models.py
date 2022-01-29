@@ -27,8 +27,8 @@ class SimulationData:
 
     p_trans: float = 0.2     # transition probability
     t_rec: int = 14          # recovery time
-    t_sus: int = 180         # sustainable time
-    n_of_steps: int = 100    # number of simulation steps
+    t_sus: int = 90         # sustainable time
+    n_of_steps: int = 20    # number of simulation steps
     iter: int = 1            # number of iterations (simulations)
 
 
