@@ -19,7 +19,10 @@ class SimResultWindow(qw.QDialog):
         self.ui.pushButton.clicked.connect(self.close)
 
         # transform table for better perception
-
+        df.reset_index(inplace=True)
+        rename_map = {'index': 'Node N', 'n_connections': 'Connections N', 'total': 'Tolal'}
+        rename_map.update({f'sim_{n}': f'Simulation {n}' for n in range(1, len(df.columns) - 1)})
+        df.rename(columns=rename_map, inplace=True)
 
         # show table
         self.display_table(self.ui.tableView, df)
