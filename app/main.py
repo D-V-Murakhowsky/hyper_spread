@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtCore import pyqtSlot, QThread
 
 from app.gui.main_window import Ui_MainWindow
-from app.models import GraphData, MeasuredGraph, SimulationData, SimulationResult
+from app.models import GraphData, MeasuredGraph, SimulationData
 from app.graph_generator import GraphGenerator
 from app.graph_setup import GraphSetup
 from app.simulation_setup import SimSetupWindow
@@ -16,14 +16,19 @@ from app.simulation import SimulationManager
 from app.result_show import SimResultWindow
 
 
-options = {
-    "node_color": "#A0CBE2",
-    "width": 0.3,
-    "with_labels": False,
+options_nodes = {
     'node_size': 50,
+    'alpha': 0.7,
+}
+
+options_edges = {
+    "width": 0.3,
     'alpha': 0.7,
     'edge_color': 'grey'
 }
+
+SUPER_SPREADERS_THRESHOLD = 5
+SUPER_SPREADERS_COLOR = '#A52A2A'
 
 
 class TheWindow(qw.QMainWindow):
@@ -58,7 +63,7 @@ class TheWindow(qw.QMainWindow):
         # events binding (buttons)
         self.ui.generate_graph_button.clicked.connect(self.build_graph)
         self.ui.simulate_button.clicked.connect(self.simulate)
-        self.ui.clear_graph_button.clicked.connect(lambda _: self.clear(1))
+        self.ui.clear_graph_button.clicked.connect(self.clear)
 
         # setting default labels values
         self.params_updater()
@@ -95,7 +100,7 @@ class TheWindow(qw.QMainWindow):
         self.graph_data = g_data
         self.params_updater()
         self.update_metric_labels(clear=True)
-        self.clear(flag=1)
+        self.clear()
 
     @pyqtSlot(SimulationData)
     def sim_data_update(self, sim_data: SimulationData) -> None:
@@ -120,6 +125,8 @@ class TheWindow(qw.QMainWindow):
     @pyqtSlot(pd.DataFrame)
     def on_simulation_finish(self, df: pd.DataFrame) -> None:
         self.sim_thread = None
+        super_spreader_nodes = df.index.tolist()[:SUPER_SPREADERS_THRESHOLD]
+        self.show_graph(marked_nodes=super_spreader_nodes)
         SimResultWindow(parent=self, df=df).show()
 
     def params_updater(self) -> None:
@@ -143,13 +150,18 @@ class TheWindow(qw.QMainWindow):
         self.ui.sim_metric_3.setText((str(self.sim_data.t_rec)))
         self.ui.sim_metric_4.setText(str(self.sim_data.t_sus))
 
-    def show_graph(self) -> None:
+    def show_graph(self, marked_nodes=None) -> None:
         """
         Draws graph on matplotlib canvas
         :return: None
         """
         layout: dict = nx.circular_layout(self.graph.G)
-        nx.draw(self.graph.G, layout, **options, ax=self.ui.static_ax)
+        colors = ["#A0CBE2"] * len(self.graph.G.nodes)
+        if marked_nodes:
+            colors = ["#A0CBE2" if (n not in marked_nodes) else SUPER_SPREADERS_COLOR
+                      for n in self.graph.G.nodes]
+        nx.draw_networkx_nodes(self.graph.G, layout, node_color=colors, **options_nodes, ax=self.ui.static_ax)
+        nx.draw_networkx_edges(self.graph.G, layout, **options_edges, ax=self.ui.static_ax)
         self.ui.cs.draw()
 
     def update_metric_labels(self, clear=False) -> None:
@@ -214,15 +226,13 @@ class TheWindow(qw.QMainWindow):
         self.sim_thread.started.connect(self.simulation.run)
         self.sim_thread.start()
 
-    def clear(self, flag: int) -> None:
+    def clear(self) -> None:
         """
         Clears the matplotlib canvas
-        :param flag: 1 - fully, 2 - from simulation data
         :return: None
         """
-        if flag == 1:
-            self.ui.static_ax.clear()
-            self.ui.cs.draw()
+        self.ui.static_ax.clear()
+        self.ui.cs.draw()
 
     def on_exit(self):
         """
