@@ -201,6 +201,10 @@ class TheWindow(qw.QMainWindow):
             pass
 
     def simulate(self) -> None:
+        """
+        Start simulation in a thread, emiting two signals: progressbar update and on finish
+        :return:
+        """
         self.sim_thread = QThread(parent=self)
         self.simulation = SimulationManager(self.graph.G, self.sim_data, current_value=self.ui.progressBar.value())
         self.simulation.progress_updater.connect(self.update_progress_bar)

@@ -4,7 +4,7 @@ from unittest import TestCase
 import pathlib
 import networkx as nx
 
-from app.simulation import Simulation
+from app.simulation import Simulation,SimulateMany
 from app.models import SimulationData
 
 
@@ -18,4 +18,10 @@ class TestSimualtion(TestCase):
     def test_one_simulation(self):
         sm = Simulation(self.G, self.data)
         result = sm.run().sorted_data
+        pass
+
+    def test_multi_simulation(self):
+        self.data.iter = 3
+        sm_many = SimulateMany(self.G, self.data)
+        result = sm_many.run_simulations()
         pass

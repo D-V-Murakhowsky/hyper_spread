@@ -18,12 +18,11 @@ class SimulationManager(QObject):
     """
     Uses to run multiply simulations using Simulation class for s single one
     """
-    progress_updater = pyqtSignal(int)  # used for updating progress bar in the main window
-    finished = pyqtSignal(pd.DataFrame) # used on simulation finish
+    progress_updater = pyqtSignal(int)   # used for updating progress bar in the main window
+    finished = pyqtSignal(pd.DataFrame)  # used on simulation finish
 
-    def __init__(self, graph: nx.Graph, sim_data: SimulationData, current_value: int = 0):
+    def __init__(self, graph: nx.Graph, sim_data: SimulationData, current_value: int = 0) -> None:
         super().__init__()
-        self.isRun = False
         self.G = graph
         self.data = sim_data
         self.current_value = current_value
@@ -31,6 +30,21 @@ class SimulationManager(QObject):
     def run(self):
         self.progress_updater.emit(self.current_value + 10)
         self.finished.emit(pd.DataFrame())
+        pass
+
+
+class SimulateMany:
+    """
+    Used to run multiply simulations
+    For test purposes extracted from SimulationManager which emits signals
+    """
+
+    def __init__(self, graph: nx.Graph, sim_data: SimulationData) -> None:
+        self.G = graph
+        self.data = sim_data
+
+    def run_simulations(self):
+        results = [Simulation(graph=self.G, sim_data=self.data).run() for _ in range(self.data.iter)]
         pass
 
 
