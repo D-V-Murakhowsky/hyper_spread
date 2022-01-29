@@ -206,7 +206,7 @@ class TheWindow(qw.QMainWindow):
         :return:
         """
         self.sim_thread = QThread(parent=self)
-        self.simulation = SimulationManager(self.graph.G, self.sim_data, current_value=self.ui.progressBar.value())
+        self.simulation = SimulationManager(self.graph.G, self.sim_data)
         self.simulation.progress_updater.connect(self.update_progress_bar)
         self.simulation.finished.connect(self.on_simulation_finish)
         self.simulation.moveToThread(self.sim_thread)

@@ -8,7 +8,7 @@ from app.simulation import Simulation,SimulateMany
 from app.models import SimulationData
 
 
-class TestSimualtion(TestCase):
+class TestSimulation(TestCase):
 
     def setUp(self) -> None:
         path = pathlib.Path(__file__).parents[1].resolve() / 'assets/graph_1.pickle'
@@ -21,7 +21,7 @@ class TestSimualtion(TestCase):
         pass
 
     def test_multi_simulation(self):
-        self.data.iter = 3
+        self.data.iter = 2
         sm_many = SimulateMany(self.G, self.data)
         result = sm_many.run_simulations()
         pass

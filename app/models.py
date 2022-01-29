@@ -41,6 +41,10 @@ class SimulationResult:
     def sorted_data(self):
         return self.comparison.sort_values(['n_infected', 'n_connections'], ascending=False)
 
+    @property
+    def sort_by_connections(self):
+        return self.comparison.sort_values(['n_connections', 'n_infected'], ascending=False)
+
     def __init__(self, nodes):
         self.comparison = pd.DataFrame(index=nodes, columns=['n_connections', 'n_infected'])
 
