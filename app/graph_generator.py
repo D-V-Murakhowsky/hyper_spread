@@ -11,6 +11,12 @@ from app import Metrics
 
 
 class GraphGenerator:
+    """
+    Generates small world graph using one of following models:
+        -  Erdos - Renyi
+        - Watts - Strogatz
+        - Song - Wang
+    """
 
     def __init__(self, n_of_nodes: int = 100, k: int = 0, prob1: float = 0, prob2: float = 0):
 
@@ -147,6 +153,12 @@ class GraphGenerator:
 
     @staticmethod
     def graph_metrics(G: nx.Graph) -> Metrics:
+        """
+        Calaulate graph metrics
+        :param G: networkx graph
+        :return: named tuple graph metrics
+        """
+
         avg_ls = list(filter(lambda x: x > 0.5,
                              [nx.average_shortest_path_length(C) for C in (G.subgraph(c).copy()
                                                                            for c in nx.connected_components(G))]))
