@@ -35,20 +35,13 @@ class SimulationData:
 @dataclass
 class SimulationResult:
 
-    n_of_infected: pd.Series  # represents number of infected by each node
-    nodes_state: pd.Series   # represents final states of nodes to mark infected nodes on the graph
     comparison: pd.DataFrame
 
     @property
     def sorted_data(self):
-        return self.n_of_infected.sort_values(ascending=False),\
-               self.comparison.sort_values(['n_infected', 'n_connections'], ascending=False)
+        return self.comparison.sort_values(['n_infected', 'n_connections'], ascending=False)
 
     def __init__(self, nodes):
-        self.n_of_infected = pd.Series(index=nodes)
-        self.n_of_infected.fillna(0, inplace=True)
-        self.nodes_state = pd.Series(nodes)
-        self.nodes = False
         self.comparison = pd.DataFrame(index=nodes, columns=['n_connections', 'n_infected'])
 
 

@@ -62,6 +62,7 @@ class Simulation:
         # initial infected
         initial_node = choice(list(self.G.nodes))
         df.at[initial_node, 't_inf'] = 1
+        n_of_infected = pd.Series(index=self.G.nodes)
 
         # main simulation loop
         for step in range(self.data.n_of_steps):
@@ -81,7 +82,7 @@ class Simulation:
                     if Utils.prob_func(self.data.p_trans) == 1:
                         if (np.isnan(df.at[neighbour, 't_inf'])) and (np.isnan(df.at[neighbour, 't_sus'])):
                             df.at[neighbour, 't_inf'] = 1  # starts infections day counter
-                            self.stat.n_of_infected[node] += 1  # writes infections stat
+                            n_of_infected[node] += 1  # writes infections stat
 
             # recovery
             logger.info(f'From infected to recovering: {df.loc[df.t_inf == self.data.t_rec].shape[0]}')
@@ -94,6 +95,6 @@ class Simulation:
 
         n_of_connected_nodes = [len(self.G.edges(node)) for node in self.G.nodes]
         self.stat.comparison['n_connections'] = n_of_connected_nodes
-        self.stat.comparison['n_infected'] = self.stat.n_of_infected
+        self.stat.comparison['n_infected'] = n_of_infected
 
         return self.stat
